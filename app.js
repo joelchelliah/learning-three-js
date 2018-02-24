@@ -1,15 +1,17 @@
-// ------------------------------------------------
-// BASIC SETUP
-// ------------------------------------------------
+// Scene
+const scene = new THREE.Scene()
 
-// Create an empty scene
-var scene = new THREE.Scene();
+// Camera
+const fov = 75
+const apectRatio = window.innerWidth/window.innerHeight
+const nearPlane = 0.1
+const farPlane = 1000
+const camera = new THREE.PerspectiveCamera( fov, apectRatio, nearPlane, farPlane )
 
-// Create a basic perspective camera
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-camera.position.z = 4;
+camera.position.z = 5;
 
-// Create a renderer with Antialiasing
+
+// Renderer
 var renderer = new THREE.WebGLRenderer({antialias:true});
 
 // Configure renderer clear color
@@ -21,33 +23,41 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 // Append Renderer to DOM
 document.body.appendChild( renderer.domElement );
 
-// ------------------------------------------------
-// FUN STARTS HERE
-// ------------------------------------------------
 
-// Create a Cube Mesh with basic material
+// Stuff!
+
 var cube = new THREE.Mesh(
-  new THREE.BoxGeometry( 2, 1, 1.5 ),
+  new THREE.BoxGeometry( 3, 0.5, 3 ),
   new THREE.MeshBasicMaterial( { color: "#433FDD" } )
 );
 
-var cube2 = new THREE.Mesh(
-  new THREE.BoxGeometry( 0.5, 2.5, 1 ),
+var cylinder = new THREE.Mesh(
+  new THREE.CylinderGeometry( 1, 0.5, 2, 32 ),
   new THREE.MeshBasicMaterial( { color: "#DD2243" } )
 );
 
-// Add cube to Scene
+var sphere = new THREE.Mesh(
+  new THREE.SphereGeometry( 0.5, 32, 32 ),
+  new THREE.MeshBasicMaterial( { color: "#11AA22" } )
+);
+
+sphere.position.y += 2
+
 scene.add( cube );
-scene.add( cube2 );
+scene.add( cylinder );
+scene.add( sphere );
+
+var sphereDir = 0.02
 
 // Render Loop
 var render = function () {
   requestAnimationFrame( render );
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  cube2.rotation.x -= 0.01;
-  cube2.rotation.y -= 0.03;
+  cube.rotation.y += 0.05;
+
+  if(sphere.position.y > 2.5 || sphere.position.y < 1.5) sphereDir = -sphereDir
+
+  sphere.position.y += sphereDir
 
   // Render the scene
   renderer.render(scene, camera);
