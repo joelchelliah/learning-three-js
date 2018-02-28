@@ -4,6 +4,8 @@ const scene = new THREE.Scene()
 
 var clock = new THREE.Clock();
 
+var paused = false;
+
 // Camera
 const fov = 75
 const apectRatio = window.innerWidth/window.innerHeight
@@ -72,22 +74,31 @@ function onDocumentMouseMove( event ) {
 				mouseY = ( event.clientY - windowHalfY );
 }
 
+
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    if (keyCode == 32) {
+        paused = !paused;
+    }
+};
+
 // Render Loop
 var render = function () {
   requestAnimationFrame( render );
-  var elapsedTime = clock.getElapsedTime();
+  if(!paused) {
+    cube.rotation.y += 0.1;
 
-  cube.rotation.y += 0.1;
+    if(sphere.position.y > 2.5 || sphere.position.y < 1.5) sphereDir = -sphereDir
 
-  if(sphere.position.y > 2.5 || sphere.position.y < 1.5) sphereDir = -sphereDir
+    sphere.position.y = 3 + Math.sin(clock.getElapsedTime())
 
-  sphere.position.y = 3 + Math.sin(elapsedTime)
+    camera.position.x += ( mouseX - camera.position.x ) * 0.0001;
+    camera.position.y -= ( mouseY - camera.position.y ) * 0.0001;
 
-  camera.position.x += ( mouseX - camera.position.x ) * 0.0001;
-  camera.position.y -= ( mouseY - camera.position.y ) * 0.0001;
-
-  // Render the scene
-  renderer.render(scene, camera);
+    // Render the scene
+    renderer.render(scene, camera);
+  }
 };
 
 render();
